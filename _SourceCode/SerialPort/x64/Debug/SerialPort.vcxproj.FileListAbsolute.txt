@@ -1,0 +1,4 @@
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Debug\SerialPort.vcxproj.MdMergeInputs.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Debug\SerialPort.vcxproj.cppwinrt_plat.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Debug\SerialPort.vcxproj.cppwinrt_comp.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Debug\SerialPort.dll

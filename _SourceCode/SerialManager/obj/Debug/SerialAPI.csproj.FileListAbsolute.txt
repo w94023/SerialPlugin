@@ -1,0 +1,6 @@
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Debug\SerialAPI.csproj.AssemblyReference.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Debug\SerialAPI.csproj.CoreCompileInputs.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Debug\SerialAPI.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Debug\SerialAPI.pdb
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Debug\SerialAPI.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Debug\SerialAPI.pdb

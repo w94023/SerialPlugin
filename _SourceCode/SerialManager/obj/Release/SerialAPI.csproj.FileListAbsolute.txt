@@ -1,0 +1,40 @@
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\SerialAPI.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\SerialAPI.pdb
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\InTheHand.Net.Bluetooth.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\InTheHand.Net.Bluetooth.xml
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Release\SerialAPI.csproj.AssemblyReference.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Release\SerialAPI.csproj.CoreCompileInputs.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Release\SerialAPI.csproj.CopyComplete
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Release\SerialAPI.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\obj\Release\SerialAPI.pdb
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\SerialAPI.dll.config
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Buffers.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Memory.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Numerics.Vectors.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Text.Encoding.CodePages.dll
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Buffers.xml
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Memory.xml
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Numerics.Vectors.xml
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialAPI\bin\Release\System.Text.Encoding.CodePages.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\SerialAPI.dll.config
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\SerialAPI.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\SerialAPI.pdb
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\InTheHand.Net.Bluetooth.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Buffers.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Memory.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Numerics.Vectors.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Text.Encoding.CodePages.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\InTheHand.Net.Bluetooth.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Buffers.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Memory.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Numerics.Vectors.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\bin\Release\System.Text.Encoding.CodePages.xml
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\obj\Release\SerialAPI.csproj.AssemblyReference.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\obj\Release\SerialAPI.csproj.CoreCompileInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\obj\Release\SerialAPI.csproj.CopyComplete
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\obj\Release\SerialAPI.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialAPI\obj\Release\SerialAPI.pdb

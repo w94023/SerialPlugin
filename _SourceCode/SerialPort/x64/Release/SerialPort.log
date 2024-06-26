@@ -1,0 +1,75 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(5652,5): warning MSB3061: "C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.dll" 파일을 삭제할 수 없습니다. 'C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.dll' 경로에 대한 액세스가 거부되었습니다.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppClean.targets(77,5): warning : 'c:\users\w9402\onedrive\바탕 화면\플러그인 프로그래밍\serialplugin_ver2\sourcecode\serialport\x64\release\serialport.dll' 경로에 대한 액세스가 거부되었습니다.
+  pch.cpp
+  Appini.cpp
+  BLEManager.cpp
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\ThreadManager.h(116,21): warning C4244: '초기화 중': '_Rep'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Rep=__int64
+          ]
+  BTClassicManager.cpp
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\ThreadManager.h(116,21): warning C4244: '초기화 중': '_Rep'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Rep=__int64
+          ]
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\BTClassicManager.cpp(232,28): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  PortScanner.cpp
+  ThreadManager.h
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\ThreadManager.h(116,21): warning C4244: '초기화 중': '_Rep'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Rep=__int64
+          ]
+  Ini.cpp
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\Ini.cpp(26,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  DAQCom.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xstring(2765,53): warning C4244: '인수': 'wchar_t'에서 'const _Elem'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xstring(2621,17): message : 컴파일되는 함수 템플릿 인스턴스화 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned __int64
+          ]
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\DAQCom.cpp(46,24): message : 컴파일되는 함수 템플릿 인스턴스화 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\DAQCom.cpp(46,24): message : 'CDAQCom::Open'에서 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string'에 대한 첫 번째 참조를 확인하세요.
+  dllmain.cpp
+  COMManager.cpp
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\ThreadManager.h(116,21): warning C4244: '초기화 중': '_Rep'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Rep=__int64
+          ]
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\COMManager.cpp(85,20): warning C4154: 배열 식을 삭제했습니다. 포인터로 변환이 제공됩니다.
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\COMManager.cpp(223,28): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  PreviousCode.cpp
+  SerialPort.cpp
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\ThreadManager.h(116,21): warning C4244: '초기화 중': '_Rep'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Rep=__int64
+          ]
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\SerialPort.h(45,27): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\SerialPort.h(53,50): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\SerialPort.h(53,81): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\SerialPort.h(54,33): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.lib 라이브러리 및 C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.exp 개체를 생성하고 있습니다.
+  코드를 생성하고 있습니다.
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\PortScanner.cpp(254): warning C4715: 'PortScanner::CheckDeviceName': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  All 2070 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  SerialPort.vcxproj -> C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.dll

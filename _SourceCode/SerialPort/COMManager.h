@@ -1,0 +1,57 @@
+#pragma once
+#include <windows.h>
+#include "PortManager.h"
+#include "PortScanner.h"
+#include "ThreadManager.h"
+
+class COMManager : public PortManager
+{
+public:
+	COMManager(LogManager& log, EventManager eventManager, std::function<void()> closeFunc, std::wstring portName, int baudRate, char dataBits = 8, char parity = 0, char stopBits = 0, eFlowControl flowControl = FC_NONE);
+	virtual ~COMManager();
+
+	bool Open()							                                     override;
+	void Connect()						                                     override;
+	void Close()						                                     override;
+											                                 
+	int  GetRecvData(char* data, int recvByteSize)                           override;
+	void GetRecvDone()			                                             override;
+	void SetRecvBufferSize(int size)                                         override;
+	int  GetRecvBufferSize()		                                         override;
+
+	void SetResourceLimit(ResourceLimitType resourceLimitType, double limit) override;
+	void CheckResources(double* cpuUsage, int* memoryRemained)               override;
+
+	int  SendData(const char* msg, int len)                                  override;
+	int  RecvData()                                                          override;
+
+private:
+	void RecvThreadFunc(bool doWork);
+
+	std::mutex			    _mtx;
+	std::condition_variable _cv;
+	PortScanner             _scanner;
+	CThreadManager          _threadManager;
+
+	HANDLE                  _handle        = INVALID_HANDLE_VALUE;
+	OVERLAPPED              _wOverlapped   = { 0 };
+	OVERLAPPED              _rOverlapped   = { 0 };
+
+	std::wstring            _portName;
+	int                     _baudRate;
+	char                    _dataBits;
+	char                    _stopBits;
+	char                    _parity;
+	eFlowControl            _flowControl;
+
+	bool                    _dataReady     = true;
+	bool                    _recvReady     = true;
+	bool                    _isAlive       = true;
+	bool                    _isConnecting  = false;
+
+	int                     _recvBufferSize = DEFAULT_BUFF_SIZE;
+	char					_recvBuffTemp[DEFAULT_BUFF_SIZE] { 0 };
+	char                    _recvBuff	 [DEFAULT_BUFF_SIZE] { 0 };
+	int					    _recvByteForRead = 1;
+	int	                    _recvLen = 0;
+};

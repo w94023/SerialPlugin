@@ -1,0 +1,12 @@
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.vcxproj.MdMergeInputs.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_plat.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_comp.cache
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.MdMergeInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_plat.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_comp.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialAPI_ver2\SourceCode\SerialPort\x64\Release\SerialPort.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.MdMergeInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_plat.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_comp.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver2\SourceCode\SerialPort\x64\Release\SerialPort.dll
