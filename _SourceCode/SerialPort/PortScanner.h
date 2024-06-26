@@ -43,6 +43,8 @@ class PortScanner
 public:
 	PortScanner(LogManager& log);
 
+	void SetDeviceInfo(std::wstring deviceName, int deviceHandle);
+
 	void                        ForceStop();
 							    
 	void                        EraseList();
@@ -64,8 +66,12 @@ public:
 private:
 	std::vector<std::wstring>  SplitWstring(std::wstring& input, const std::wstring& delimiter);
 	HANDLE					   SetTimeout(HANDLE handle, int timeout);
+	void OnFileAccessError(const wchar_t *errHeader);
 
 	LogManager&				    _log;
+	std::wstring                _deviceName;
+	int                         _deviceHandle;
+
 	bool					    _forceStop = false;
 	HANDLE	                    _handle    = INVALID_HANDLE_VALUE;
 	GUID                        _guid;

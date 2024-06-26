@@ -15,14 +15,21 @@ namespace SerialManager
             USB,
             DAQ,
             BTClassic,
-            BLE
+            BLE,
+            TCP,
+        }
+
+        public enum SocketType
+        {
+            Server
         }
 
         private SerialHandle _manager;
 
         private bool _isAlive = false;
 
-        [HideInInspector] public  DeviceType deviceType = DeviceType.USB;
+        [HideInInspector] public DeviceType deviceType = DeviceType.USB;
+        [HideInInspector] public SocketType socketType = SocketType.Server;
         // USB option
         [HideInInspector] public string      portName    = "";
         [HideInInspector] public BaudRate    baudRate    = BaudRate.bps9600;
@@ -36,30 +43,57 @@ namespace SerialManager
         [HideInInspector] public string uuidTx      = "{0000FFE1-0000-1000-8000-00805F9B34FB}";
         [HideInInspector] public string uuidRx      = "{0000FFE1-0000-1000-8000-00805F9B34FB}";
         // DAQ options
-        [HideInInspector] public int[] ports;
+        [HideInInspector] public int[] AIPorts;
+        [HideInInspector] public int[] AOPorts;
+        [HideInInspector] public int[] DPorts;
+        [HideInInspector] public int[] lines;
+        // TCP options
+        [HideInInspector] public int port;
 
         [HideInInspector]                 public  bool         getPPSOnDataReceived = false;
                                           public  int          PPS { get { return _PPS; } }
                                           private int         _PPS = 0;
         [SerializeField, HideInInspector] private int        __PPS = 0;
+        public bool getReceivedBufferLength { get { return _getReceivedBufferLength; } set { _getReceivedBufferLength = value; _manager.getReceivedBufferLength = value; } }
+        [SerializeField, HideInInspector] private bool  _getReceivedBufferLength = false;
+                                          public  int          receivedBufferLength { get { return _receivedBufferLength; } }
+                                          private int         _receivedBufferLength = 0;
+        [SerializeField, HideInInspector] private int        __receivedBufferLength = 0;
+        public float flushRatio { get { return _flushRatio; } set { _flushRatio = GetClampedFloat(value, 0.01f, 1.0f); _manager.flushRatio = _flushRatio; } }
+        [SerializeField, HideInInspector] private float _flushRatio = 0.9f;
 
                                           public  bool         isConnected { get { return _isConnected; } }
                                           private bool        _isConnected = false;
         [SerializeField, HideInInspector] private bool       __isConnected = false;
+        [HideInInspector] public bool   useCloseMessage = false;
+        [HideInInspector] public byte[] closeMessage;
 
         [HideInInspector] public  int          logLevel             = 1;
+
+        // Packet options
         [HideInInspector] public  int          receiveByteSize      = 1;
         [HideInInspector] public  int          receiveBufferSize    = 10000;
         [HideInInspector] public  byte[]       stopByte             = new byte[0];
         [HideInInspector] public  int          packetLength         = 0;
         [HideInInspector] public  EncodingType encodingType         = EncodingType.ASCII;
+        public bool usePacketLength { get { return _usePacketLength; } set { _usePacketLength = value; _manager.usePacketLength = _usePacketLength; } }
+        public bool useStopByte     { get { return _useStopByte;     } set { _useStopByte     = value; _manager.useStopByte     = _useStopByte;     } }
+        [SerializeField, HideInInspector] private bool _usePacketLength = false;
+        [SerializeField, HideInInspector] private bool _useStopByte     = false;
 
-        public bool   usePPSLimit    { set { _usePPSLimit    = value; if (_isConnected) _manager.usePPSLimit    = _usePPSLimit;    } get { return _usePPSLimit;    } } [SerializeField, HideInInspector] bool   _usePPSLimit    = false;
-        public bool   useCPULimit    { set { _useCPULimit    = value; if (_isConnected) _manager.useCPULimit    = _useCPULimit;    } get { return _useCPULimit;    } } [SerializeField, HideInInspector] bool   _useCPULimit    = false;
-        public bool   useMemoryLimit { set { _useMemoryLimit = value; if (_isConnected) _manager.useMemoryLimit = _useMemoryLimit; } get { return _useMemoryLimit; } } [SerializeField, HideInInspector] bool   _useMemoryLimit = false;
-        public int    PPSLimit       { set { _PPSLimit       = value; if (_isConnected) _manager.PPSLimit       = _PPSLimit;       } get { return _PPSLimit;       } } [SerializeField, HideInInspector] int    _PPSLimit       = 300;
-        public double CPULimit       { set { _CPULimit       = value; if (_isConnected) _manager.CPULimit       = _CPULimit;       } get { return _CPULimit;       } } [SerializeField, HideInInspector] double _CPULimit       = 95;
-        public int    memoryLimit    { set { _memoryLimit    = value; if (_isConnected) _manager.memoryLimit    = _memoryLimit;    } get { return _memoryLimit;    } } [SerializeField, HideInInspector] int    _memoryLimit    = 200;
+        // Resource limit options
+        public bool   usePPSLimit    { get { return _usePPSLimit;    } set { _usePPSLimit    = value; _manager.usePPSLimit    = _usePPSLimit;    } }
+        public bool   useCPULimit    { get { return _useCPULimit;    } set { _useCPULimit    = value; _manager.useCPULimit    = _useCPULimit;    } }
+        public bool   useMemoryLimit { get { return _useMemoryLimit; } set { _useMemoryLimit = value; _manager.useMemoryLimit = _useMemoryLimit; } }
+        public int    PPSLimit       { get { return _PPSLimit;       } set { _PPSLimit       = value; _manager.PPSLimit       = _PPSLimit;       } }
+        public double CPULimit       { get { return _CPULimit;       } set { _CPULimit       = value; _manager.CPULimit       = _CPULimit;       } } 
+        public int    memoryLimit    { get { return _memoryLimit;    } set { _memoryLimit    = value; _manager.memoryLimit    = _memoryLimit;    } }
+        [SerializeField, HideInInspector] bool   _usePPSLimit    = false;
+        [SerializeField, HideInInspector] bool   _useCPULimit    = false;
+        [SerializeField, HideInInspector] bool   _useMemoryLimit = false;
+        [SerializeField, HideInInspector] int    _PPSLimit       = 300;
+        [SerializeField, HideInInspector] double _CPULimit       = 95;
+        [SerializeField, HideInInspector] int    _memoryLimit    = 200;
 
         [HideInInspector] public UnityEvent<SerialLog>  onScanEnded;
         [HideInInspector] public UnityEvent             onConnected;
@@ -80,24 +114,48 @@ namespace SerialManager
             _manager.onDisconnected     += OnDisconnected;
             _manager.onDataReceived     += OnDataReceived;
 
+            SetManagerConfig();
+
             _mainThreadContext = SynchronizationContext.Current;
+        }
+
+        private float GetClampedFloat(float value, float minValue, float maxValue)
+        {
+            if (value < minValue) return minValue;
+            if (value > maxValue) return maxValue;
+            return value;
+        }
+
+        private void SetManagerConfig()
+        {
+            if (_manager == null) return;
+            _manager.getReceivedBufferLength = _getReceivedBufferLength;
+            _flushRatio = GetClampedFloat(_flushRatio, 0.01f, 1.0f);
+            _manager.flushRatio = _flushRatio;
+
+            _manager.usePacketLength      = _usePacketLength;
+            _manager.useStopByte          = _useStopByte;
+
+            _manager.usePPSLimit          = _usePPSLimit;
+            _manager.useCPULimit          = _useCPULimit;
+            _manager.useMemoryLimit       = _useMemoryLimit;
+            _manager.PPSLimit             = _PPSLimit;
+            _manager.CPULimit             = _CPULimit;
+            _manager.memoryLimit          = _memoryLimit;
         }
 
         private void OnValidate()
         {
+            SetManagerConfig();
+
             if (!_isConnected) {
-                __PPS         = 0;
+                __PPS = 0;
+                __receivedBufferLength = 0;
                 __isConnected = false;
             }
             else {
-                _manager.usePPSLimit          = _usePPSLimit;
-                _manager.useCPULimit          = _useCPULimit;
-                _manager.useMemoryLimit       = _useMemoryLimit;
-                _manager.PPSLimit             = _PPSLimit;
-                _manager.CPULimit             = _CPULimit;
-                _manager.memoryLimit          = _memoryLimit;
-
                 __PPS = _PPS;
+                __receivedBufferLength = _receivedBufferLength;
                 __isConnected = true;
             }
         }
@@ -116,28 +174,24 @@ namespace SerialManager
             _manager.encodingType         = encodingType;
             _manager.stopByte             = stopByte;
             _manager.packetLength         = packetLength;
-            _manager.usePPSLimit          = _usePPSLimit;
-            _manager.useCPULimit          = _useCPULimit;
-            _manager.useMemoryLimit       = _useMemoryLimit;
-            _manager.PPSLimit             = _PPSLimit;
-            _manager.CPULimit             = _CPULimit;
-            _manager.memoryLimit          = _memoryLimit;
 
             switch (deviceType) {
                 case DeviceType.USB:       _manager.Connect(portName, baudRate, dataBit, parity, stopBit, flowControl); break;
-                case DeviceType.DAQ:       _manager.Connect(deviceName, ports); break;
+                case DeviceType.DAQ:       _manager.Connect(deviceName, AIPorts, AOPorts, DPorts, lines); break;
                 case DeviceType.BTClassic: _manager.Connect(deviceName); break;
-                case DeviceType.BLE:       
-                    UUID uuid = new UUID();
-                    uuid.service = uuidService;
-                    uuid.tx      = uuidTx;
-                    uuid.rx      = uuidRx;
-                    _manager.Connect(deviceName, uuid); break;
+                // case DeviceType.BLE:       
+                //     UUID uuid = new UUID();
+                //     uuid.service = uuidService;
+                //     uuid.tx      = uuidTx;
+                //     uuid.rx      = uuidRx;
+                //     _manager.Connect(deviceName, uuid); break;
+                case DeviceType.TCP : _manager.Connect(0, port); break;
             }
         }
 
         public void Disconnect()
         {
+            if (useCloseMessage) _manager.SendData(closeMessage);
             _manager.Disconnect();
         }
 
@@ -148,6 +202,18 @@ namespace SerialManager
         }
 
         public void SendData(byte[] data)
+        {
+            if (!_isAlive) return;
+            _manager.SendData(data);
+        }
+
+        public void SendData(double[] data)
+        {
+            if (!_isAlive) return;
+            _manager.SendData(data);
+        }
+
+        public void SendData(bool[] data)
         {
             if (!_isAlive) return;
             _manager.SendData(data);
@@ -205,16 +271,24 @@ namespace SerialManager
         private void OnDataReceived(SerialData e)
         {
             if (!_isAlive) return;
-            _PPS = _manager.PPS;
+            if (getPPSOnDataReceived) {
+                _PPS  = _manager.PPS;
+                __PPS = _manager.PPS;
+            }
+            if (getReceivedBufferLength) {
+                _receivedBufferLength  = _manager.receivedBufferLength;
+                __receivedBufferLength = _manager.receivedBufferLength;
+                Debug.Log(_manager.receivedBufferLength);
+            }
+            
             onDataReceived?.Invoke(e);
         }
 
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
             _isAlive = false;
+            if (useCloseMessage) _manager.SendData(closeMessage);
             _manager.Disconnect();
-            Destroy(gameObject);
-            GC.Collect();
         }
     }
 }

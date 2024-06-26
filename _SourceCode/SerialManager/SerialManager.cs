@@ -1,267 +1,423 @@
 ﻿using System;
-using System.IO;
 using System.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
-using static SerialManager.ComHandle;
+using System.Diagnostics;
+using static SerialManager.CPPImportLayer;
+using System.ComponentModel;
 
 namespace SerialManager
 {
-	internal static class LogManager
-    {
-        private static string _currentDirectory = Directory.GetCurrentDirectory();
-		private static string _logFileName      = "\\Log.txt";
-		private static string _filePath         = _currentDirectory + _logFileName;
-
-        internal static void SaveLog(string log)
-        {
-            using (StreamWriter writer = new StreamWriter(_filePath, true)) {
-				writer.WriteLine(log);
-			}
-        }
-    }
-
-	public class SerialHandle
+	public class SerialHandle : EventManager
 	{
-		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int CheckMemory();
-
-		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int GetLog(byte[] log);
-
-		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
-		private static extern void RegisterLogging(EventCallback callback);
-
-		private ComHandle _handle;
-
-		// Log level 설정
+		// Log 관련
 		// 0 : Error, 1 : Error+Normal, 2 : Error+Normal+Developer
-		public int logLevel = 1;
-		// PPS 확인 설정
-		public bool getPPSOnDataReceived = false;
-		public int  PPS					 { get { if (_handle == null) { return -1; } else { return _handle.PPS; } } }
+		private int _logLevel = 1; public int logLevel { get { return _logLevel; } set { _logLevel = value; SetLogLevel(_logLevel); } }
+		private event EventCallbackWithChar _onLogReceived;
+		public  event Action<SerialLog>      onLogReceived;
+
+		// Scan device 관련
+		public event Action<SerialLog>   onScanEnded;
+		private byte[]                  _scannedDevices = new byte[10000];
+
+		// 연결 설정
+		private IntPtr _deviceNamePtr = IntPtr.Zero;
+		private IntPtr _AIPortsPtr    = IntPtr.Zero;
+		private IntPtr _AOPortsPtr    = IntPtr.Zero;
+		private IntPtr _DPortsPtr     = IntPtr.Zero;
+		private IntPtr _LinesPtr      = IntPtr.Zero;
+		private ConnectionConfig _connectionConfig;
+		private int _CPPHandle = 0;
+
 		// 연결 상태 확인
-		public bool isConnected { get { if (_handle == null) { return false; } else { return _handle.isConnected; } } }
-		// 데이터 수신 관련 설정
-		public  int           receiveByteSize   { get { return _receiveByteSize; } set { _receiveByteSize = value; if (_handle != null) _handle.receiveByteSize = _receiveByteSize; } }
-		private int          _receiveByteSize   = 1;
-		public  int           receiveBufferSize { get { return _receiveBufferSize; } set { _receiveBufferSize = value; if (_handle != null) _handle.SetBufferSize(_receiveBufferSize); } }
-		private int          _receiveBufferSize = 10000;
-		public  byte[]        stopByte          { get { return _stopByte; } set { _stopByte = value; if (_handle != null) _handle.SetStopByte(_stopByte); } }
-		private byte[]       _stopByte          = new byte[0];
-		public  int           packetLength	    { get { return _packetLength; } set { _packetLength = value; if (_handle != null) _handle.SetPacketLength(_packetLength); } }
-		private int          _packetLength	    = 0;
-		public  EncodingType  encodingType      { get { return _encodingType; } set { _encodingType = value; if (_handle != null) _handle.SetEncodingType(_encodingType); } }
-		private EncodingType _encodingType      = EncodingType.ASCII;
-		// 리소스 관리 설정
-		private bool         _usePPSLimit = false;
-		public  bool          usePPSLimit { 
-			get { return _usePPSLimit; } 
-			set { 
-				_usePPSLimit = value; 
-				if (_handle != null) {
-					if (_usePPSLimit) {
-						_handle.SetPPSLimit(_PPSLimit);
-					}
-					else {
-						_handle.SetPPSLimit(-1);
-					}
-				}
-			} 
-		}
-		private bool         _useCPULimit = false;
-		public  bool	      useCPULimit {
-			get { return _useCPULimit; } 
-			set { 
-				_useCPULimit = value; 
-				if (_handle != null) {
-					if (_useCPULimit) {
-						_handle.SetCPULimit(_CPULimit);
-					}
-					else {
-						_handle.SetCPULimit(-1);
-					}
-				}
-			} 
-		}
-		private bool         _useMemoryLimit = false;
-		public  bool          useMemoryLimit {
-			get { return _useMemoryLimit; } 
-			set { 
-				_useMemoryLimit = value; 
-				if (_handle != null) {
-					if (_useMemoryLimit) {
-						_handle.SetMemoryLimit(_memoryLimit);
-					}
-					else {
-						_handle.SetMemoryLimit(-1);
-					}
-				}
-			} 
-		}
-		public  int			  PPSLimit      { get { return _PPSLimit; } set { _PPSLimit = value; if (_handle != null && _usePPSLimit) _handle.SetPPSLimit(_PPSLimit); } }
-		private int          _PPSLimit	    = 300; // Hz
-		public  double        CPULimit      { get { return _CPULimit; } set { _CPULimit = value; if (_handle != null && _useCPULimit) _handle.SetCPULimit(_CPULimit); } }
-		private double       _CPULimit      = 95; // 사용량의 % 수치
-		public  int           memoryLimit   { get { return _memoryLimit; } set { _memoryLimit = value; if (_handle != null && _useCPULimit) _handle.SetMemoryLimit(_memoryLimit); } }
-		private int          _memoryLimit   = 100; // 남은 RAM의 MB 수치
+		private EventCallback _onConnected;
+		private EventCallback _onConnectionFailed;
+		private EventCallback _onDisconnected;
+		public event Action    onConnected;
+		public event Action    onConnectionFailed;
+		public event Action    onDisconnected;
 
-		public  int connectionTimeout { get { return _connectionTimeout; } set { _connectionTimeout = value; if (_handle != null) _handle.SetConnectionTimeout(_connectionTimeout); } }
-		private int _connectionTimeout = 5000;
+		public bool   isConnected { get { return _isConnected; } }
+		private bool _isConnected = false;
 
-		// Events
-		private event EventCallback _onLogReceived;
-		private int registeredOnScanEndedCallback = 0;
+		// Received data 관련
+		private EventCallbackWithChar   _onDataReceived;
+		public  event Action<SerialData> onDataReceived;
 
-		public event Action<SerialLog> onLogReceived;
-		public event Action<SerialLog> onScanEnded;
-		public event Action onConnected;
-		public event Action onConnectionFailed;
-		public event Action onDisconnected;
-		public event Action<SerialData> onDataReceived;
+		private IntPtr _stopBytePtr = IntPtr.Zero;
+		private PacketConfig _packetConfig;
+
+		public  int     receiveByteSize   { get { return _packetConfig.receiveByteSize;   } set { _packetConfig.receiveByteSize   = value; SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public  int     receiveBufferSize { get { return _packetConfig.receiveBufferSize; } set { _packetConfig.receiveBufferSize = value; SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public  int     packetLength	  { get { return _packetConfig.packetLength;      } set { _packetConfig.packetLength      = value; SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public  byte[]  stopByte          { get { return _stopByte;                       } set { _stopByte                       = value; SetStopByte(_stopByte);                     } }
+		private byte[] _stopByte          = null;
+		public  int	    PPSLimit          { get { return _packetConfig.PPSLimit;          } set { _packetConfig.PPSLimit          = value; SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public  EncodingType  encodingType { get { return _encodingType; } set { _encodingType = value; } }
+		private EncodingType _encodingType = EncodingType.ASCII;
+
+		public bool usePacketLength { get { return _packetConfig.GetPacketLengthUsage(); } set { _packetConfig.SetPacketLengthUsage(value); SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public bool useStopByte     { get { return _packetConfig.GetStopByteUsage();     } set { _packetConfig.SetStopByteUsage(value);     SetPacketConfig(_CPPHandle, _packetConfig); } }
+		public bool usePPSLimit     { get { return _packetConfig.GetPPSLimitUsage();     } set { _packetConfig.SetPPSLimitUsage(value);     SetPacketConfig(_CPPHandle, _packetConfig); } }
+		
+		public  bool  getPPSOnDataReceived = false;
+		public  int   PPS { get { return _PPS; } }
+		private int  _PPS = 0;
+
+		public  bool  getReceivedBufferLength = false;
+		public  int   receivedBufferLength { get { return _receivedBufferLength; } }
+		private int  _receivedBufferLength = 0;
+
+		public float flushRatio { get { return _packetConfig.flushRatio; } set { _packetConfig.flushRatio = value; SetPacketConfig(_CPPHandle, _packetConfig); } }
+
+		private int _packetCount = 0;
+		private Stopwatch stopwatch;
+        private double _checkPoint;
+
+		// Resource 관련
+		private ResourceConfig _resourceConfig;
+
+		public  bool    useCPULimit    { get { return _resourceConfig.GetCPULimitUsage();    } set { _resourceConfig.SetCPULimitUsage(value);    SetResourceConfig(_CPPHandle, _resourceConfig); } }
+		public  bool    useMemoryLimit { get { return _resourceConfig.GetMemoryLimitUsage(); } set { _resourceConfig.SetMemoryLimitUsage(value); SetResourceConfig(_CPPHandle, _resourceConfig); } }
+		public  double  CPULimit    { get { return _resourceConfig.CPULimit;    } set { _resourceConfig.CPULimit    = value; SetResourceConfig(_CPPHandle, _resourceConfig); } }
+		public  int     memoryLimit { get { return _resourceConfig.memoryLimit; } set { _resourceConfig.memoryLimit = value; SetResourceConfig(_CPPHandle, _resourceConfig); } }
 
 		public SerialHandle()
 		{
-			_onLogReceived = new EventCallback(OnLogReceived);
-			RegisterLogging(_onLogReceived);
+			//OpenConsoleAndPrint();
+
+			_packetConfig = new PacketConfig();
+			_packetConfig.receiveByteSize = 1;
+			_packetConfig.receiveBufferSize = 10000;
+			_packetConfig.usePacketLength = 0;
+			_packetConfig.packetLength = 1;
+			_packetConfig.useStopByte = 0;
+			_packetConfig.stopByte = IntPtr.Zero;
+			_packetConfig.stopByteLength = 0;
+			_packetConfig.usePPSLimit = 0;
+			_packetConfig.PPSLimit = 300;
+			_packetConfig.flushRatio = 0.9f;
+			_stopByte = new byte[0];
+
+			_resourceConfig.useCPULimit = 0;
+			_resourceConfig.CPULimit = 95;
+			_resourceConfig.useMemoryLimit = 0;
+			_resourceConfig.memoryLimit = 100;
+
+			PtrManager.StringToIntPtr(ref _deviceNamePtr, "");
+			_connectionConfig.deviceName = _deviceNamePtr;
+			_connectionConfig.useTimeout = 1;
+			_connectionConfig.connectionTimeout = 30000;
+
+			_onLogReceived  = new EventCallbackWithChar(OnLogReceived);
+			_onDataReceived = new EventCallbackWithChar(OnDataReceived);
+
+			_onConnected        = new EventCallback(OnConnected);
+			_onConnectionFailed = new EventCallback(OnConnectionFailed);
+			_onDisconnected     = new EventCallback(OnDisconnected);
+
+			SetLogCallback(_onLogReceived);
+			SetLogLevel(_logLevel);
 		}
 
 		~SerialHandle()
 		{
-			_onLogReceived = null;
+			Marshal.FreeHGlobal(_deviceNamePtr);
+			Marshal.FreeHGlobal(_AIPortsPtr);
+			Marshal.FreeHGlobal(_AOPortsPtr);
+			Marshal.FreeHGlobal(_DPortsPtr);
+			Marshal.FreeHGlobal(_LinesPtr);
+			Marshal.FreeHGlobal(_stopBytePtr);
+		}
+
+		private void OnLogReceived(IntPtr ptr, ref int length)
+		{
+			string log = Marshal.PtrToStringUni(ptr, length / 2);
+			Invoke(onLogReceived, new SerialLog(log));
+
+			DeleteLogMemory(ptr);
 		}
 
 		public void ScanDevices()
 		{
-			if (_handle == null) {
-				_handle = new SerialPortManager();
-				if (registeredOnScanEndedCallback == 0) {
-					_handle.onScanEnded += OnScanEnded;
-					registeredOnScanEndedCallback++;
-				}
-				_handle.ScanDevices();
+			int byteCount = 0;
+			CPPImportLayer.ScanDevices(_scannedDevices, ref byteCount);
+
+			if (byteCount == 0) return;
+
+			string str = Encoding.Unicode.GetString(_scannedDevices, 0, byteCount);
+			string[] devices = str.Split('\\');
+			
+			Invoke(onScanEnded, new SerialLog(devices.Take(devices.Length - 1).ToArray()));
+		}
+
+		private void CreateConnection()
+		{
+			Random rand = new Random();
+			int randNum = (rand.Next(1000, 10000));
+			if (CPPImportLayer.CreateConnection(randNum) == 0) {
+				CreateConnection();
 			}
 			else {
-				if (registeredOnScanEndedCallback == 0) {
-					_handle.onScanEnded += OnScanEnded;
-					registeredOnScanEndedCallback++;
-				}
-				_handle.ScanDevices();
+				_CPPHandle = randNum;
 			}
-		}
-
-		public void Connect(string deviceName)
-		{
-			Disconnect();
-			_handle = new SerialPortManager(deviceName);
-			ConnectHandle();
-		}
-
-		public void Connect(string deviceName, UUID uuid)
-		{
-			Disconnect();
-			_handle = new SerialPortManager(deviceName, uuid);
-			ConnectHandle();
 		}
 
 		public void Connect(string comPort, BaudRate baudRate,
 			DataBit dataBit = DataBit.bit8, Parity parity = Parity.None, StopBit stopBit = StopBit.bit1, FlowControl flowControl = FlowControl.None)
 		{
-			Disconnect();
-			_handle = new SerialPortManager(comPort, baudRate, dataBit, parity, stopBit, flowControl);
-			ConnectHandle();
+			if (_isConnected) Disconnect();
+
+			_connectionConfig.deviceType = DeviceType.USB;
+
+			PtrManager.StringToIntPtr(ref _deviceNamePtr, comPort);
+			_connectionConfig.deviceName = _deviceNamePtr;
+
+			_connectionConfig.baudRate = baudRate;
+			_connectionConfig.dataBit = dataBit;
+			_connectionConfig.parity = parity;
+			_connectionConfig.stopBit = stopBit;
+			_connectionConfig.flowControl = flowControl;
+			
+			Connect();
 		}
 
-		public void Connect(string deviceName, int[] ports)
+		public void Connect(string deviceName)
 		{
-			Disconnect();
-			_handle = new DAQManager(deviceName, ports);
-			ConnectHandle();
+			if (_isConnected) Disconnect();
+
+			_connectionConfig.deviceType = DeviceType.BTClassic;
+
+			PtrManager.StringToIntPtr(ref _deviceNamePtr, deviceName);
+			_connectionConfig.deviceName = _deviceNamePtr;
+
+			Connect();
 		}
 
-		private void ConnectHandle()
+		//public void Connect(string deviceName, UUID uuid)
+		//{
+		//	Disconnect();
+		//	_handle = new SerialPortManager(deviceName, uuid);
+		//	ConnectHandle();
+		//}
+
+		public void Connect(string deviceName, int[] AIPorts, int[] AOPorts, int[] DPorts, int[] lines)
 		{
-			if (_handle == null) return;
-			_handle.getPPSOnDataReceived = getPPSOnDataReceived;
-			_handle.receiveByteSize = _receiveByteSize;
-			_handle.SetStopByte(_stopByte);
-			_handle.SetPacketLength(_packetLength);
-			_handle.SetEncodingType(_encodingType);
-			_handle.SetBufferSize(_receiveBufferSize);
-			_handle.SetPPSLimit(_usePPSLimit ? _PPSLimit : -1);
-			_handle.SetCPULimit(_useCPULimit ? _CPULimit : -1);
-			_handle.SetMemoryLimit(_useMemoryLimit ? _memoryLimit : -1);
-			_handle.SetConnectionTimeout(_connectionTimeout);
-			RegisterEventsToHandle();
-			_handle.Connect();
+			if (_isConnected) Disconnect();
+			
+			_connectionConfig.deviceType = DeviceType.DAQ;
+
+			PtrManager.StringToIntPtr(ref _deviceNamePtr, deviceName);
+			_connectionConfig.deviceName = _deviceNamePtr;
+
+			PtrManager.IntArrToIntPtr(ref _AIPortsPtr, AIPorts);
+			_connectionConfig.AIPorts      = _AIPortsPtr;
+			_connectionConfig.AIPortsCount = AIPorts.Length;
+
+			PtrManager.IntArrToIntPtr(ref _AOPortsPtr, AOPorts);
+			_connectionConfig.AOPorts      = _AOPortsPtr;
+			_connectionConfig.AOPortsCount = AOPorts.Length;
+
+			PtrManager.IntArrToIntPtr(ref _DPortsPtr, DPorts);
+			_connectionConfig.DPorts      = _DPortsPtr;
+			_connectionConfig.DPortsCount = DPorts.Length;
+
+			PtrManager.IntArrToIntPtr(ref _LinesPtr, lines);
+			_connectionConfig.lines      = _LinesPtr;
+			_connectionConfig.linesCount = lines.Length;
+
+			Connect();
 		}
 
-		private void RegisterEventsToHandle()
+		public void Connect(int localIP, int port)
 		{
-			_handle.onConnected += OnConnected;
-			_handle.onConnectionFailed += OnConnectionFailed;
-			_handle.onDisconnected += OnDisconnected;
-			_handle.onDataReceived += OnDataReceived;
+			// TCP server
+			if (_isConnected) Disconnect();
+			
+			PtrManager.StringToIntPtr(ref _deviceNamePtr, "TCP server");
+			_connectionConfig.deviceName = _deviceNamePtr;
+			_connectionConfig.deviceType = DeviceType.TCP;
+			_connectionConfig.socketType = SocketType.Server;
+			_connectionConfig.localIP = localIP;
+			_connectionConfig.port = port;
+			_connectionConfig.useTimeout = 0;
+
+			Connect();
+		}
+
+		private void SetStopByte(byte[] stopByte)
+		{
+			PtrManager.ByteArrToIntPtr(ref _stopBytePtr, stopByte);
+			_packetConfig.stopByte = _stopBytePtr;
+			_packetConfig.stopByteLength = stopByte.Length;
+
+			SetPacketConfig(_CPPHandle, _packetConfig);
+		}
+
+		private void Connect()
+		{
+			CreateConnection();
+
+			SetPacketConfig(_CPPHandle, _packetConfig);
+			SetStopByte(_stopByte);
+			SetResourceConfig(_CPPHandle, _resourceConfig);
+			RegisterEvents(_CPPHandle, _onConnected, _onConnectionFailed, _onDisconnected);
+			RegisterDataEvent(_CPPHandle, _onDataReceived);
+
+			CPPImportLayer.Connect(_CPPHandle, _connectionConfig);
+
+			stopwatch = Stopwatch.StartNew();
+            _checkPoint = stopwatch.Elapsed.TotalSeconds * 1000;
+		}
+
+		private void OnConnected()
+		{
+			_isConnected = true;
+			Invoke(onConnected);
+		}
+
+		private void OnConnectionFailed()
+		{
+			_isConnected = false;
+			Invoke(onConnectionFailed);
 		}
 
 		public void Disconnect()
 		{
-			if (_handle == null) return;
-			_handle.Disconnect(); 
-			registeredOnScanEndedCallback = 0;
+			CPPImportLayer.Disconnect(_CPPHandle);
 		}
 
-		public void SendData(string msg)
+		private void OnDisconnected()
 		{
-			if (_handle == null) return;
-			_handle.SendData(msg);
+			_isConnected = false;
+			Invoke(onDisconnected);
+			DeleteConnection(_CPPHandle);
+		}
+
+		private string EncodeData(IntPtr ptr, int length)
+        {
+			byte[] buffer = new byte[length];
+			Marshal.Copy(ptr, buffer, 0, length);
+
+            string str = "";
+            if (_encodingType == EncodingType.DEC) {
+                for (int i = 0; i < buffer.Length; i++) {
+                    str += buffer[i].ToString();
+                    if (i != buffer.Length-1) {
+                        str += "-";
+                    }
+                }
+            }
+            else if (_encodingType == EncodingType.HEX) {
+                str = BitConverter.ToString(buffer);
+            }
+            else if (_encodingType == EncodingType.ASCII) {
+                str = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
+            }
+            else if (_encodingType == EncodingType.UTF8) {
+                str = Encoding.UTF8.GetString(buffer);
+            }
+            else if (_encodingType == EncodingType.UTF16) {
+				str = Encoding.Unicode.GetString(buffer);
+            }
+            return str;
+        }
+
+		private double[] EncodeData(IntPtr ptr, int length, int portsCount)
+		{
+			double[] recvData = new double[portsCount];
+
+			byte[] buffer = new byte[length];
+			Marshal.Copy(ptr, buffer, 0, length);
+
+			for (int i = 0; i < portsCount; i++) {
+				byte[] byteBuff = new byte[8];
+				for (int j = 0; j < 8; j++) {
+					byteBuff[j] = buffer[j + 8 * i];
+				}
+				recvData[i] = BitConverter.ToDouble(byteBuff, 0);
+			}
+
+			return recvData;
+		}
+
+		private void OnDataReceived(IntPtr ptr, ref int length)
+		{
+			double elapsedTime = stopwatch.Elapsed.TotalSeconds * 1000 - _checkPoint;
+			_packetCount++;
+
+			if (elapsedTime >= 1000) {
+				_PPS = _packetCount;
+				_packetCount = 0;
+				_checkPoint = stopwatch.Elapsed.TotalSeconds * 1000;
+			}
+
+			if (getReceivedBufferLength && _isConnected) {
+				GetReceivedBufferLength(_CPPHandle, ref _receivedBufferLength);
+			}
+			else {
+				_receivedBufferLength = 0;
+			}
+			
+			if (_connectionConfig.deviceType == DeviceType.DAQ) {
+				double[] data = EncodeData(ptr, length, _connectionConfig.AIPortsCount);
+				Invoke(onDataReceived, new SerialData(data));
+			}
+			else {
+				string packet = EncodeData(ptr, length);
+				Invoke(onDataReceived, new SerialData(packet));
+			}
+		}
+
+		public void SendData(string data)
+		{
+			if (!_isConnected) return;
+			byte[] byteToSend;
+            if (_encodingType == EncodingType.UTF8) {
+                byteToSend = Encoding.UTF8.GetBytes(data);
+            }
+            else if (_encodingType == EncodingType.UTF16) {
+				byteToSend = Encoding.Unicode.GetBytes(data);
+            }
+			else {
+				// Encoding type = ASCII, DEC, HEX의 경우
+                byteToSend = Encoding.ASCII.GetBytes(data);
+            }
+			CPPImportLayer.SendPacketData(_CPPHandle, byteToSend, byteToSend.Length);
 		}
 
 		public void SendData(byte[] data)
 		{
-			if (_handle == null) return;
-			_handle.SendData(data);
+			if (!_isConnected) return;
+			CPPImportLayer.SendPacketData(_CPPHandle, data, data.Length);
+		}
+
+		public void SendData(double[] data)
+		{
+			if (!_isConnected) return;
+			CPPImportLayer.SendFloatData(_CPPHandle, data, data.Length);
+		}
+
+		public void SendData(bool[] data)
+		{
+			if (!_isConnected) return;
+			int[] intData = new int[data.Length];
+			for (int i = 0; i < data.Length; i++) {
+				intData[i] = data[i] ? 1 : 0;
+			}
+			CPPImportLayer.SendIntData(_CPPHandle, intData, intData.Length);
 		}
 
 		public float[] CheckResources()
 		{
-			if (_handle == null) return new float[] { -1, -1 };
-			else				 return _handle.CheckResources();
-		}
+			if (_CPPHandle == 0) return new float[] { -1, -1 };
+			else {
+				double CPUUsage = -1;
+				int memoryRemained = -1;
+				CheckResource(_CPPHandle, ref CPUUsage, ref memoryRemained);
 
-		public void Test(double cpuUsage, int memoryRemained)
-		{
-			if (_handle == null) return;
-			_handle.Test(cpuUsage, memoryRemained);
-		}
-
-		private void OnLogReceived()
-		{
-			byte[] log = new byte[260];
-			int logLevel = GetLog(log);
-
-			string header = "";
-			switch (logLevel) {
-				case 0: header = "[Error log]"; break;
-				case 1: header = "[Normal log]"; break;
-				case 2: header = "[Developer log]"; break;
-				default: header = ""; break;
+				return new float[] { (float)CPUUsage, memoryRemained };
 			}
-			string logStr = header + Encoding.Unicode.GetString(log, 0, log.Length);
-
-			//LogManager.SaveLog(logStr);
-
-			if (logLevel > this.logLevel) return;
-			onLogReceived?.Invoke(new SerialLog(logStr));
 		}
-
-		private void OnScanEnded(SerialLog e) => onScanEnded?.Invoke(e);
-
-		private void OnConnected() => onConnected?.Invoke();
-
-		private void OnConnectionFailed() => onConnectionFailed?.Invoke();
-
-		private void OnDisconnected() => onDisconnected?.Invoke();
-
-		private void OnDataReceived(SerialData e) => onDataReceived?.Invoke(e);
 	}
 }

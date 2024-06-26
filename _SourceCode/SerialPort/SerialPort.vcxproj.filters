@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="포트 관리">
+      <UniqueIdentifier>{efca8aa7-e3d9-4ba0-ab85-6d04859a0851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구조체 관리">
+      <UniqueIdentifier>{0d1ba380-e4f9-4d2c-be24-d0c9f3f0d2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="연결 관리">
+      <UniqueIdentifier>{7f579ac3-237f-43a7-9a04-015315505cc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="인터페이스">
+      <UniqueIdentifier>{9e09be1d-6e38-4904-bd8e-13a07f4ac69a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,79 +33,82 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SerialPort.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="COMManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PortManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Appini.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DAQCom.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="NIDAQmx.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ini.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PortScanner.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="EventManager.h">
+    <ClInclude Include="Managers\DataManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="BTClassicManager.h">
+    <ClInclude Include="Ports\SockCommon.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="BLEManager.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Ports\PortManager.h">
+      <Filter>포트 관리</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectionManager.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Ports\DAQCom.h">
+      <Filter>포트 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Ports\COMManager.h">
+      <Filter>포트 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Ports\BTClassicManager.h">
+      <Filter>포트 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Ports\BLEManager.h">
+      <Filter>포트 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\StructManager.h">
+      <Filter>구조체 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\ConnectionManager.h">
+      <Filter>연결 관리</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Managers\ThreadManager.h">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SerialPort.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="COMManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Appini.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PreviousCode.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DAQCom.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ini.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PortScanner.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadManager.h">
+    <ClCompile Include="PreviousCode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="BTClassicManager.cpp">
+    <ClCompile Include="Ports\TCPServer.h">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="BLEManager.cpp">
+    <ClCompile Include="Ports\TCPServer.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\SockCommon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\BLEManager.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\BTClassicManager.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\COMManager.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\DAQCom.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="StructManager.cpp">
+      <Filter>구조체 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionManager.cpp">
+      <Filter>연결 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputLayers\OutputLayer.cpp">
+      <Filter>인터페이스</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

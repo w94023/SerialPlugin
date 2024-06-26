@@ -1,0 +1,14 @@
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.dll.config
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.pdb
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.csproj.AssemblyReference.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.csproj.CoreCompileInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.pdb
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.dll.config
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\bin\x64\Release\SerialManager.pdb
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.csproj.AssemblyReference.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.csproj.CoreCompileInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\플러그인 프로그래밍\SerialPlugin\SerialPlugin_ver3\SourceCode\SerialManager\obj\x64\Release\SerialManager.pdb

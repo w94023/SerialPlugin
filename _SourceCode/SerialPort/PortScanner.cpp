@@ -4,7 +4,30 @@
 #include <locale>
 #include <codecvt>
 
-PortScanner::PortScanner(LogManager& log) : _log(log) { }
+PortScanner::PortScanner(LogManager& log): 
+	_log(log) { }
+
+void PortScanner::SetDeviceInfo(std::wstring deviceName, int deviceHandle)
+{
+	_deviceName = deviceName;
+	_deviceHandle = deviceHandle;
+
+	_log.Developer(L"PortScanner::SetDeviceInfo - set device : %s, %d", _deviceName.c_str(), _deviceHandle);
+}
+
+void PortScanner::OnFileAccessError(const wchar_t *errHeader)
+{
+	int errCode = GetLastError();
+	LPSTR errString = NULL;
+
+	int size = FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		0, errCode, 0, (LPWSTR)&errString, 0, 0); 
+
+	_log.Developer(L"[%s, %d] %s [Error code] %d : %s", 
+		_deviceName.c_str(), _deviceHandle, errHeader, errCode, errString);
+
+	LocalFree (errString); 
+}
 
 void PortScanner::ForceStop()
 {
@@ -54,9 +77,8 @@ std::vector<std::wstring> PortScanner::ScanDevices(GUID guid)
 		deviceIDAndName.push_back(deviceID);
 		deviceIDAndName.push_back(deviceName);
 
-		//wprintf(L"\n");
-		//wprintf(L"Device found (ID) : %s\n", deviceIDStr.c_str());
-		//wprintf(L"Device found (Name) : %s\n", deviceNameStr.c_str());
+		_log.Developer(L"Device found (Name) : %s", deviceNameStr.c_str());
+		_log.Developer(L"Device found (ID) : %s", deviceIDStr.c_str());
 	}
 
 	// SP_DEVINFO_DATA 정보 삭제
@@ -107,7 +129,7 @@ void PortScanner::ScanDevices()
 		_deviceCount++;
 	}
 
-	_log.Developer(L"PortScanner::ScanDevices - scan finished [_deviceCount]" + std::to_wstring(_deviceCount));
+	_log.Developer(L"[%s, %d] PortScanner::ScanDevices - 스캔 성공 [deviceCount]%d", _deviceName.c_str(), _deviceHandle, _deviceCount);
 	if (onScanEnded) onScanEnded();
 }
 
@@ -152,22 +174,23 @@ int PortScanner::RequestPairing(std::wstring deviceName)
             do {
 				if (_forceStop) break;
 
+				// 검색된 장치 이름 std::wstring 형으로 전환
 				std::wstring foundDeviceName(bdi.szName);
-				_log.Normal((std::wstring(L"Found Bluetooth device : ") + foundDeviceName).c_str());
 				
 				if (foundDeviceName == deviceName) {
-					_log.Normal((std::wstring(L"Request pairing to device : ") + foundDeviceName).c_str());
+					_log.Normal(L"장치 검색 성공 - 페어링 요청 전송 : %s", foundDeviceName.c_str());
 
 					BLUETOOTH_OOB_DATA_INFO oobData;
 					ZeroMemory(&oobData, sizeof(BLUETOOTH_OOB_DATA_INFO));
 
+					// BT classic 장치 페어링 요청
 					DWORD result = BluetoothAuthenticateDeviceEx(NULL, hRadio, &bdi, &oobData, MITMProtectionNotRequired);
 					if (result == ERROR_SUCCESS) {
-						_log.Normal(L"Device paired successfully");
+						_log.Normal(L"장치 페어링에 성공하였습니다");
 						pairingResult = 1;
 					} 
 					else {
-						_log.Error((std::wstring(L"Device pairing failed with error : ") + std::to_wstring(result)).c_str());
+						_log.Error(L"장치 페어링에 실패하였습니다 - [오류] %s", std::to_wstring(result).c_str());
 						switch (result) {
 							case 1244: _log.Error(L"Pairing request was canceled"); break;
 							case 170:  _log.Error(L"Previous request has not been completed"); break;
@@ -188,17 +211,16 @@ int PortScanner::RequestPairing(std::wstring deviceName)
 int PortScanner::CheckDeviceName(std::wstring deviceName, bool isBTDevice)
 {
 	ScanDevices();
-
 	// Output : -2   -> 진행 불가능한 오류 (connection failed)
 	// Output : -1   -> 페어링 request 진행
 	// Output : >= 0 -> 검색된 index로 연결 절차 수행
 
-	if (_deviceCount == 0) {
-		_log.Error(L"Failed to find scanned device");
-		return -1;
-	}
+	//if (_deviceCount == 0) {
+	//	_log.Error(L"검색된 블루투스 장치가 없습니다");
+	//	return -1;
+	//}
 	if (deviceName == L"") {
-		_log.Error(L"Given device name is empty");
+		_log.Error(L"잘못된 장치 이름 입력입니다");
 		return -1;
 	}
 
@@ -212,44 +234,46 @@ int PortScanner::CheckDeviceName(std::wstring deviceName, bool isBTDevice)
 	}
 
 	if (targetDeviceCount > 1) {
-		_log.Normal(L"Multiple devices found : " + deviceName);
-		_log.Developer(L"PortScanner::CheckDeviceName - [targetDeviceCount]" + std::to_wstring(targetDeviceCount));
+		_log.Normal(L"여러 개의 장치가 검색되었습니다 - 첫 번째 장치로 연결 요청 : %s", deviceName.c_str());
+		_log.Developer(L"[$s, $d] PortScanner::CheckDeviceName - [targetDeviceCount] %d", deviceName.c_str(), _deviceHandle, targetDeviceCount);
 		return targetDeviceIndex;
 	}
 	else if (targetDeviceCount == 1) {
-		_log.Normal((std::wstring(L"Device found : ") + deviceName).c_str());
+		_log.Normal(L"장치 검색 성공 : %s", deviceName.c_str());
 		return targetDeviceIndex;
 	}
 	else if (targetDeviceCount == 0) {
 		if (!isBTDevice) {
-			_log.Error((std::wstring(L"Failed to find device : ") + deviceName).c_str());
+			_log.Error(L"장치 검색에 실패했습니다 : %s", deviceName.c_str());
 			return -1;
 		}
+		else {
+			_log.Normal(L"페어링된 장치가 없습니다 - 페어링 요청 시작 : %s", deviceName.c_str());
 
-		_log.Normal(L"Failed to find device in scanned device list : request pairing");
+			size_t pairingTryCount = 0;
+			int    isPaired = 0;
 
-		size_t pairingTryCount = 0;
-		int    isPaired = 0;
+			do {
+				if (pairingTryCount == requestCountLimit) {
+					_log.Error(L"장치 페어링에 실패했습니다 : %s", deviceName.c_str());
+					return -1;
+				}
 
-		do {
-			if (pairingTryCount == requestCountLimit) {
-				_log.Error(L"Failed to pair device");
-				return -1;
-			}
-			_log.Normal((std::wstring(L"Try to pair device : count ") + std::to_wstring(pairingTryCount + 1)).c_str());
+				_log.Normal(L"%s 페어링 요청 (%d 회)", deviceName.c_str(), pairingTryCount + 1);
 
-			isPaired = RequestPairing(deviceName);
-			if (isPaired == -2) return -1;
-			pairingTryCount++;
+				isPaired = RequestPairing(deviceName);
+				if (isPaired == -2) return -1;
+				pairingTryCount++;
 
-			if (_forceStop) return -1;
+				if (_forceStop) return -1;
 
-		} while (isPaired != 1);
+			} while (isPaired != 1);
 
-		Sleep(5000);
+			Sleep(5000);
 
-		_log.Normal(L"Rescan ports");
-		return CheckDeviceName(deviceName, isBTDevice);
+			// 페어링된 장치 다시 검색
+			return CheckDeviceName(deviceName, isBTDevice);
+		}
 	}
 }
 
@@ -287,6 +311,7 @@ HANDLE PortScanner::GetBTHandle(std::wstring deviceName, std::wstring uuidServic
 
 	int scanCount    = 0;
 	int IdMatchedCount = 0;
+	std::vector<std::wstring> scannedIDList;
 	for (DWORD i = 0; SetupDiEnumDeviceInterfaces(hDevInfo, NULL, &guid, i, &deviceInterfaceData); i++)
 	{
 		SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData;
@@ -307,6 +332,7 @@ HANDLE PortScanner::GetBTHandle(std::wstring deviceName, std::wstring uuidServic
 			wchar_t currDeviceID[MAX_DEVICE_ID_LEN];
 			CM_Get_Device_ID(deviceInfoData.DevInst, currDeviceID, MAX_DEVICE_ID_LEN, 0);
 			std::wstring currDeviceIDStr = currDeviceID;
+			scannedIDList.push_back(currDeviceIDStr);
 			//wprintf(L"current device ID : %s\n", currDeviceIDStr.c_str());
 			//wprintf(L"target device ID : %s\n", _deviceIDList[targetDeviceIndex].c_str());
 
@@ -348,7 +374,13 @@ HANDLE PortScanner::GetBTHandle(std::wstring deviceName, std::wstring uuidServic
 		_log.Error(L"Failed to connect device");
 	}
 	else {
-		_log.Developer(L"Interface found but ID was not matched");
+		_log.Developer(L"[%s, %d] PortScanner::GetBTHandle - ID 매칭 실패", _deviceName.c_str(), _deviceHandle);
+		_log.Developer(L"[%s, %d] PortScanner::GetBTHandle - 스캔된 장치 개수 : %d", _deviceName.c_str(), _deviceHandle, scanCount);
+		_log.Developer(L"[%s, %d] PortScanner::GetBTHandle - 예상된 ID : %s", _deviceName.c_str(), _deviceHandle, _deviceIDList[targetDeviceIndex].c_str());
+		_log.Developer(L"[%s, %d] PortScanner::GetBTHandle - 검색된 ID :", _deviceName.c_str(), _deviceHandle);
+		for (const std::wstring& wstr : scannedIDList) {
+			_log.Developer(wstr);
+		}
 		_log.Error(L"Failed to connect device");
 	}
 
@@ -364,8 +396,8 @@ HANDLE PortScanner::GetCOMHandle(std::wstring portName, int baudRate, char dataB
 	handle = CreateFile((L"\\\\.\\" + portName).c_str(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
 
 	if (handle == INVALID_HANDLE_VALUE) {
-		_log.Developer(L"Failed to get COM handle");
-		_log.Error(L"Failed to connect device");
+		OnFileAccessError(L"TcpServer::GetCOMHandle - CreateFile 매크로 에러 :");
+		_log.Error(L"USB 디바이스 연결에 실패했습니다.");
 		return handle;
 	}
 
@@ -375,9 +407,8 @@ HANDLE PortScanner::GetCOMHandle(std::wstring portName, int baudRate, char dataB
 	DCB  dcb;
 	//dcb의 기본값을 받는다.
 	if (!GetCommState(handle, &dcb)) {
-		DWORD error = GetLastError();
-		_log.Developer(L"Failed to get COM state : " + std::to_wstring(error));
-		_log.Error(L"Failed to connect device");
+		OnFileAccessError(L"TcpServer::GetCOMHandle - GetCommState 메서드 에러 :");
+		_log.Error(L"USB 디바이스 연결에 실패했습니다.");
 		return handle;
 	}
 
@@ -437,8 +468,8 @@ HANDLE PortScanner::GetCOMHandle(std::wstring portName, int baudRate, char dataB
 
 
 	if (!SetCommState(handle, &dcb)) {
-		_log.Developer(L"Failed to set COM state");
-		_log.Error(L"Failed to connect device");
+		OnFileAccessError(L"TcpServer::GetCOMHandle - SetCommState 메서드 에러 :");
+		_log.Error(L"USB 디바이스 연결에 실패했습니다.");
 		return handle;
 	}
 
@@ -478,8 +509,8 @@ HANDLE PortScanner::SetTimeout(HANDLE handle, int timeout)
 		return handle;
 	}
 	else {
-		_log.Developer(L"Failed to set COM handle timeout");
-		_log.Error(L"Failed to connect device");
+		OnFileAccessError(L"TcpServer::GetCOMHandle - SetCommTimeouts 메서드 에러 :");
+		_log.Error(L"USB 디바이스 연결에 실패했습니다.");
 		return INVALID_HANDLE_VALUE;
 	}
 }

@@ -32,7 +32,10 @@ internal class SerialHandleUnityEditor : Editor
         }
         else if (_target.deviceType == SerialHandleUnity.DeviceType.DAQ) {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("deviceName"), new GUIContent("deviceName"), true);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("ports"), new GUIContent("ports"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("AIPorts"), new GUIContent("AIPorts"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("AOPorts"), new GUIContent("AOPorts"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("DPorts"),  new GUIContent("DPorts"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("lines"),   new GUIContent("lines"), true);
         }
         else if (_target.deviceType == SerialHandleUnity.DeviceType.BTClassic) {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("deviceName"), new GUIContent("deviceName"), true);
@@ -42,6 +45,10 @@ internal class SerialHandleUnityEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("uuidService"), new GUIContent("uuidService"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("uuidTx"), new GUIContent("uuidTx"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("uuidRx"), new GUIContent("uuidRx"), true);
+        }
+        else if (_target.deviceType == SerialHandleUnity.DeviceType.TCP) {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("socketType"), new GUIContent("socketType"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("port"), new GUIContent("port"), true);
         }
         EditorGUI.indentLevel = 0;
 
@@ -57,14 +64,19 @@ internal class SerialHandleUnityEditor : Editor
         // 들여쓰기 설정
         EditorGUI.indentLevel = 1;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("__isConnected"), new GUIContent("isConnected"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("useCloseMessage"), new GUIContent("useCloseMessage"), true);
+        if (_target.useCloseMessage) EditorGUILayout.PropertyField(serializedObject.FindProperty("closeMessage"), new GUIContent("closeMessage"), true);
         EditorGUI.indentLevel = 0;
 
         EditorGUILayout.Space();
-        GUILayout.Label("Packet per seconds(PPS) options", EditorStyles.boldLabel);
+        GUILayout.Label("Communication options", EditorStyles.boldLabel);
         // 들여쓰기 설정
         EditorGUI.indentLevel = 1;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("getPPSOnDataReceived"), new GUIContent("getPPSOnDataReceived"), true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("__PPS"), new GUIContent("PPS"), true);
+        if (_target.getPPSOnDataReceived) EditorGUILayout.PropertyField(serializedObject.FindProperty("__PPS"), new GUIContent("PPS"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_getReceivedBufferLength"), new GUIContent("getReceivedBufferLength"), true);
+        if (_target.getReceivedBufferLength) EditorGUILayout.PropertyField(serializedObject.FindProperty("__receivedBufferLength"), new GUIContent("receivedBufferLength"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_flushRatio"), new GUIContent("flushRatio"), true);
         EditorGUI.indentLevel = 0;
 
         EditorGUILayout.Space();
@@ -73,8 +85,14 @@ internal class SerialHandleUnityEditor : Editor
         EditorGUI.indentLevel = 1;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("receiveByteSize"),   new GUIContent("receiveByteSize"),   true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("receiveBufferSize"), new GUIContent("receiveBufferSize"), true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("stopByte"),          new GUIContent("stopByte"),          true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("packetLength"),      new GUIContent("packetLength"),      true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_usePacketLength"),  new GUIContent("usePacketLength"),   true);
+        if (_target.usePacketLength) {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("packetLength"),  new GUIContent("packetLength"),      true);
+        }
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_useStopByte"),      new GUIContent("useStopByte"),       true);
+        if (_target.useStopByte) {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("stopByte"),      new GUIContent("stopByte"),          true);
+        }
         EditorGUILayout.PropertyField(serializedObject.FindProperty("encodingType"),      new GUIContent("encodingType"),      true);
         EditorGUI.indentLevel = 0;
 
