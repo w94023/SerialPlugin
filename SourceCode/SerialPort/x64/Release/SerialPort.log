@@ -1,0 +1,39 @@
+﻿  BLEManager.cpp
+  BTClassicManager.cpp
+  COMManager.cpp
+  DAQCom.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xstring(2765,53): warning C4244: '인수': 'wchar_t'에서 'const _Elem'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\xstring(2621,17): message : 컴파일되는 함수 템플릿 인스턴스화 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned __int64
+          ]
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\ComPort\DAQCom.cpp(46,24): message : 컴파일되는 함수 템플릿 인스턴스화 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\ComPort\DAQCom.cpp(46,24): message : 'CDAQCom::Open'에서 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string'에 대한 첫 번째 참조를 확인하세요.
+  PortScanner.cpp
+  ThreadManager.h
+  SerialPort.cpp
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\SerialPort.h(45,27): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\SerialPort.h(53,50): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\SerialPort.h(53,81): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\SerialPort.h(54,33): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.lib 라이브러리 및 C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.exp 개체를 생성하고 있습니다.
+  코드를 생성하고 있습니다.
+  44 of 1838 functions ( 2.4%) were compiled, the rest were copied from previous compilation.
+    5 functions were new in current compilation
+    41 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  SerialPort.vcxproj -> C:\Users\w9402\Dropbox\Projects\VisualStudioProject\SerialPort\x64\Release\SerialPort.dll
