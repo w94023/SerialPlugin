@@ -1,0 +1,7 @@
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Debug\SerialManager.dll.config
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Debug\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Debug\SerialManager.pdb
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Debug\SerialManager.csproj.AssemblyReference.cache
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Debug\SerialManager.csproj.CoreCompileInputs.cache
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Debug\SerialManager.dll
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Debug\SerialManager.pdb
