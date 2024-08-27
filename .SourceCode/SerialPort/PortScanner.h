@@ -49,7 +49,7 @@ public:
 							    
 	void                        EraseList();
 	void                        ScanDevices();
-	std::vector<std::wstring>   ScanDevices(GUID guid);
+	std::vector<DeviceInfo>     ScanDevices(GUID guid);
 
 	std::map<int, std::wstring> GetDeviceNameList() { return _deviceNameList; }
 	std::map<int, DeviceType>   GetDeviceTypeList() { return _deviceTypeList; }

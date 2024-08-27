@@ -62,6 +62,7 @@ namespace SerialManager
 
     public enum DeviceType
 	{
+        None,
 		USB,
 		BTClassic,
 		BLE,

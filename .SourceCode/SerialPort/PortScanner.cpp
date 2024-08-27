@@ -42,9 +42,9 @@ void PortScanner::EraseList()
 	_deviceIDList.clear();
 }
 
-std::vector<std::wstring> PortScanner::ScanDevices(GUID guid)
+std::vector<DeviceInfo> PortScanner::ScanDevices(GUID guid)
 {
-	std::vector<std::wstring> deviceIDAndName;
+	std::vector<DeviceInfo> deviceInfoVector;
 
 	// Bluetooth 혹은 COM port GUID 기반으로 hDevInfo 생성
 	// hDevInfo 생성 실패 시 함수 동작 종료
@@ -52,7 +52,7 @@ std::vector<std::wstring> PortScanner::ScanDevices(GUID guid)
 	hDevInfo = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_PRESENT);
 	if (hDevInfo == INVALID_HANDLE_VALUE) {
 		_log.Developer(L"Failed to create HDEVINFO from GUID");
-		return deviceIDAndName;
+		return deviceInfoVector;
 	}
 
 	// SP_DEVINFO_DATA 클래스 생성
@@ -61,31 +61,80 @@ std::vector<std::wstring> PortScanner::ScanDevices(GUID guid)
 
 	// hDevInfo에서 조회 가능한 SP_DEVINFO_DATA 클래스 탐색
 	for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &DeviceInfoData); i++) {
-		// 디바이스의 이름 조회
+		// SPDRP_FRIENDLYNAME : 장치의 "사용자 친화적 이름(Friendly Name)"을 가져옵니다. 이 이름은 장치를 사용자가 쉽게 식별할 수 있도록 하는 텍스트 문자열입니다.
+		// (예를 들어, USB 드라이브의 경우, SPDRP_FRIENDLYNAME은 "SanDisk USB Drive"와 같은 이름을 반환할 수 있습니다.)
+		// SPDRP_HARDWAREID : 장치의 특정 모델이나 제조사 정보를 포함하고 있어, 장치 종류를 정확하게 구별할 수 있는 하드웨어 ID를 가져옵니다.
+		// (USB 장치의 일반적인 하드웨어 ID는 다음과 같은 형식을 따릅니다.)
+		// (USB\VID_xxxx&PID_yyyy)
+
+		//장치 이름 불러오기
 		TCHAR deviceName[MAX_PATH] = { 0 };
 		DWORD propertyType;
-		if (!SetupDiGetDeviceRegistryProperty(hDevInfo, &DeviceInfoData, SPDRP_FRIENDLYNAME, &propertyType, (PBYTE)deviceName, sizeof(deviceName), NULL)) continue;
+		if (!SetupDiGetDeviceRegistryProperty(hDevInfo, &DeviceInfoData, SPDRP_FRIENDLYNAME, &propertyType, (PBYTE)deviceName, sizeof(deviceName), NULL)) {
+			DWORD error = GetLastError();
+			_log.Developer(L"Failed to get device name, i : %d, error code : %s", (int)i, std::to_wstring(error).c_str());
+			continue;
+		}
 		if (propertyType != REG_SZ) continue;
+		_log.Developer(L"Device name : %s", deviceName);
 
-		// 디바이스의 ID 조회
+		// 장치 ID 조회
 		TCHAR deviceID[MAX_DEVICE_ID_LEN] = { 0 };
 		CM_Get_Device_ID(DeviceInfoData.DevInst, deviceID, MAX_DEVICE_ID_LEN, 0);
+		_log.Developer(L"Device ID : %s", deviceID);
 
-		// 디바이스의 ID 및 이름 wstring 형으로 변환하여 벡터에 저장
-		std::wstring deviceIDStr(deviceID);
-		std::wstring deviceNameStr(deviceName);
-		deviceIDAndName.push_back(deviceID);
-		deviceIDAndName.push_back(deviceName);
+		// 장치 하드웨어 ID 불러오기
+		// 장치 하드웨어 ID로 데이터 타입 분류
+		DeviceType deviceType = None;
+		wchar_t hardwareID[256];
+		wchar_t deviceClass[256];
+		if (SetupDiGetDeviceRegistryProperty(hDevInfo, &DeviceInfoData, SPDRP_HARDWAREID, nullptr, (BYTE*)hardwareID, sizeof(hardwareID), nullptr)) {
+			_log.Developer(L"Device hardware ID : %s", hardwareID);
 
-		_log.Developer(L"Device found (Name) : %s", deviceNameStr.c_str());
-		_log.Developer(L"Device found (ID) : %s", deviceIDStr.c_str());
+			// USB 장치 확인
+			if (wcsstr(hardwareID, L"USB") || wcsstr(hardwareID, L"BUS")) {
+				deviceType = USB_COM;
+			}
+			// Bluetooth Classic 장치 확인
+			else if (wcsstr(hardwareID, L"BTHENUM") || wcsstr(hardwareID, L"Bluetooth")) {
+				deviceType = BTClassic;
+			}
+			// BLE 장치 확인
+			else if (wcsstr(hardwareID, L"BTHLE")) {
+				deviceType = BLE;
+			}
+		}
+		else {
+			DWORD error = GetLastError();
+			_log.Developer(L"Failed to get device hardware ID, i : %d, error code : %s", (int)i, std::to_wstring(error).c_str());
+			continue;
+		}
+
+		// 장치 클래스 가져오기
+		if (SetupDiGetDeviceRegistryProperty(hDevInfo, &DeviceInfoData, SPDRP_CLASS, nullptr, (BYTE*)deviceClass, sizeof(deviceClass), nullptr)) {
+			_log.Developer(L"Device class : %s", deviceClass);
+		}
+		else {
+			DWORD error = GetLastError();
+			_log.Developer(L"Failed to get device class, i : %d, error code : %s", (int)i, std::to_wstring(error).c_str());
+			continue;
+		}
+		
+
+		// 디바이스의 ID, 이름, 타입, 클래스를 벡터에 저장
+		DeviceInfo deviceInfo = DeviceInfo();
+		std::wstring deviceNameStr(deviceName);   deviceInfo.deviceName  = deviceNameStr;
+		std::wstring deviceIDStr(deviceID);       deviceInfo.deviceID    = deviceIDStr;
+		std::wstring deviceClassStr(deviceClass); deviceInfo.deviceClass = deviceClassStr;
+												  deviceInfo.deviceType  = deviceType;
+		deviceInfoVector.push_back(deviceInfo);
 	}
 
 	// SP_DEVINFO_DATA 정보 삭제
 	// 메모리 누수 방지를 위해 필수
 	SetupDiDestroyDeviceInfoList(hDevInfo);
 
-	return deviceIDAndName;
+	return deviceInfoVector;
 }
 
 void PortScanner::ScanDevices()
@@ -93,44 +142,45 @@ void PortScanner::ScanDevices()
 	EraseList();
 
 	// PC에서 조회 가능한 COM, BT 디바이스 ID 및 이름 조회
-	std::vector<std::wstring> COMDevInfo = ScanDevices(GUID_DEVCLASS_PORTS);
-	std::vector<std::wstring> BTDevInfo  = ScanDevices(GUID_DEVCLASS_BLUETOOTH);
+	std::vector<DeviceInfo> COMDevInfo = ScanDevices(GUID_DEVCLASS_PORTS);
+	std::vector<DeviceInfo> BTDevInfo  = ScanDevices(GUID_DEVCLASS_BLUETOOTH);
+	// COM, BT로 조회한 디바이스 정보 벡터 합치기
+	std::vector<DeviceInfo> devInfo;
+	devInfo.reserve(COMDevInfo.size() + BTDevInfo.size());
+    std::copy(COMDevInfo.begin(), COMDevInfo.end(), std::back_inserter(devInfo));
+    std::copy(BTDevInfo.begin(),   BTDevInfo.end(), std::back_inserter(devInfo));
 
-	// COM Device ID refining 및 List로 저장
-	for (size_t i = 0; i < COMDevInfo.size()/2; i++) {
-		if (COMDevInfo[2*i].find(L"USB") == std::wstring::npos) continue;
+	//USB 장치 분류
+	for (size_t i = 0; i < devInfo.size(); i++) {
+		if (devInfo[i].deviceType == USB_COM) {
+			// 장치 이름에서 "(", ")" 사이의 이름을 추출하여 반환
+			// 일반적으로 USB 디바이스는 이름의 괄호 사이에 COM포트 번호가 등록되어 있음
+			// --> COM# (#는 포트 번호)로 USB 장치의 이름을 반환
+			size_t start = devInfo[i].deviceName.find(L"(");
+			size_t end   = devInfo[i].deviceName.find(L")");
+			if (start == std::string::npos || end == std::string::npos) continue;
 
-		size_t start = COMDevInfo[2*i + 1].find(L"(");
-		size_t end   = COMDevInfo[2*i + 1].find(L")");
-		if (start == std::string::npos || end == std::string::npos) continue;
-		if (start > end) continue;
-		std::wstring deviceNameStr = COMDevInfo[2*i + 1].substr(start + 1, end - start - 1);
-		//std::wstring deviceNameStr = COMDevInfo[2*i + 1];
-
-		_deviceTypeList[_deviceCount] = USB_COM;
-		_deviceIDList[_deviceCount]   = SplitWstring(COMDevInfo[2*i], L"\\")[1];
-		_deviceNameList[_deviceCount] = deviceNameStr;
-		_deviceCount++;
+			_deviceTypeList[_deviceCount] = USB_COM;
+			_deviceIDList[_deviceCount]   = SplitWstring(devInfo[i].deviceID, L"\\")[1];
+			_deviceNameList[_deviceCount] = devInfo[i].deviceName.substr(start + 1, end - start - 1);
+			_deviceCount++;
+		}
+		else if (devInfo[i].deviceType == BTClassic) {
+			_deviceTypeList[_deviceCount] = BTClassic;
+			_deviceIDList[_deviceCount]   = SplitWstring(SplitWstring(devInfo[i].deviceID, L"\\")[1], L"_")[1];
+			_deviceNameList[_deviceCount] = devInfo[i].deviceName;
+			_deviceCount++;
+		}
+		else if (devInfo[i].deviceType == BLE) {
+			_deviceTypeList[_deviceCount] = BLE;
+			_deviceIDList[_deviceCount]   = SplitWstring(SplitWstring(devInfo[i].deviceID, L"\\")[1], L"_")[1];
+			_deviceNameList[_deviceCount] = devInfo[i].deviceName;
+			_deviceCount++;
+		}
 	}
 
-	// BT Device ID refining 및 List로 저장
-	for (size_t i = 0; i < BTDevInfo.size()/2; i++) {
-		std::wstring checkType = SplitWstring(BTDevInfo[2*i], L"\\")[0];
-		std::wstring checkDev  = SplitWstring(BTDevInfo[2*i], L"\\")[1];
-
-		if (checkDev.find(L"DEV") == std::wstring::npos) continue;
-
-		if      (checkType == L"BTHLE")   _deviceTypeList[_deviceCount] = BTClassic;
-		else if (checkType == L"BTHENUM") _deviceTypeList[_deviceCount] = BLE;
-
-		std::wstring deviceIDStr = SplitWstring(checkDev, L"_")[1];
-
-		_deviceIDList[_deviceCount]   = deviceIDStr;
-		_deviceNameList[_deviceCount] = BTDevInfo[2*i + 1];
-		_deviceCount++;
-	}
-
-	_log.Developer(L"[%s, %d] PortScanner::ScanDevices - 스캔 성공 [deviceCount]%d", _deviceName.c_str(), _deviceHandle, _deviceCount);
+	_log.Developer(L"[%s, %d] PortScanner::ScanDevices - 스캔 완료", _deviceName.c_str(), _deviceHandle);
+	_log.Developer(L"[%s, %d] PortScanner::ScanDevices - deviceCount : %d", _deviceName.c_str(), _deviceHandle, _deviceCount);
 	if (onScanEnded) onScanEnded();
 }
 

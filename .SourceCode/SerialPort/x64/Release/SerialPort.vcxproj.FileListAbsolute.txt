@@ -26,3 +26,7 @@ C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialPort
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_plat.cache
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_comp.cache
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.dll
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.MdMergeInputs.cache
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_plat.cache
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.vcxproj.cppwinrt_comp.cache
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SerialPort.dll

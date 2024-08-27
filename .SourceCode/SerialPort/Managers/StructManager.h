@@ -33,12 +33,21 @@ private:
 
 typedef enum
 {
+	None,
 	USB_COM,
 	BTClassic,
 	BLE,
 	NI_DAQ,
 	TCP,
 } DeviceType;
+
+struct DeviceInfo
+{
+    std::wstring deviceName;
+	std::wstring deviceID;
+	std::wstring deviceClass;
+	DeviceType   deviceType;
+};
 
 enum class BaudRate
 {

@@ -28,3 +28,11 @@ C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialMana
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.pdb
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Release\UnityEngine.CoreModule.dll
 C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.csproj.CopyComplete
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Release\SerialManager.dll.config
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Release\SerialManager.dll
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\bin\Release\SerialManager.pdb
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.csproj.AssemblyReference.cache
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.csproj.CoreCompileInputs.cache
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.csproj.CopyComplete
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.dll
+C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialManager\obj\Release\SerialManager.pdb

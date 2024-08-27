@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="포트 관리">
       <UniqueIdentifier>{efca8aa7-e3d9-4ba0-ab85-6d04859a0851}</UniqueIdentifier>
     </Filter>
@@ -27,24 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="NIDAQmx.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PortScanner.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Managers\DataManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ports\SockCommon.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Ports\PortManager.h">
       <Filter>포트 관리</Filter>
     </ClInclude>
@@ -66,24 +40,30 @@
     <ClInclude Include="Managers\ConnectionManager.h">
       <Filter>연결 관리</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\DataManager.h">
+      <Filter>연결 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="Ports\SockCommon.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NIDAQmx.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PortScanner.h">
+      <Filter>포트 관리</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Managers\ThreadManager.h">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PortScanner.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="PreviousCode.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ports\TCPServer.h">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ports\TCPServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Ports\SockCommon.cpp">
@@ -109,6 +89,18 @@
     </ClCompile>
     <ClCompile Include="OutputLayers\OutputLayer.cpp">
       <Filter>인터페이스</Filter>
+    </ClCompile>
+    <ClCompile Include="PortScanner.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\TCPServer.cpp">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Ports\TCPServer.h">
+      <Filter>포트 관리</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\ThreadManager.h">
+      <Filter>연결 관리</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

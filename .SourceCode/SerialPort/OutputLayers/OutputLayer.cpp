@@ -23,9 +23,12 @@
 LogManager _log = LogManager();
 std::map<int, ConnectionManager*> _manager;
 
+EventCallbackWithChar _scanCallback;
+bool _isScanEventRegistered = false;
+
 extern "C"
 {
-	// Create console for debuggin in Unity editor
+	// Create console for debugging in Unity editor
 	__declspec(dllexport) void OpenConsoleAndPrint() 
     {
         // Create console window
@@ -35,15 +38,20 @@ extern "C"
         FILE* stream;
         errno_t err = freopen_s(&stream, "CONOUT$", "w", stdout);
 
+		if (err != 0) {
+            std::cerr << "Error reopening stdout." << std::endl;
+        }
+
         // Ready for user input (prevent to close console)
         std::cin.get();
-
-//#if HEADER_INCLUDED
-//		std::cout << "DAQ included" << std::endl;
-//#else
-//		std::cout << "DAQ not included" << std::endl;
-//#endif
     }
+
+	// Register scan event callback
+	__declspec(dllexport) void SetScanCallback(EventCallbackWithChar callback)
+	{ 
+		_scanCallback = callback;
+		_isScanEventRegistered = true;
+	}
 
 	// Register log event callback
 	__declspec(dllexport) void SetLogCallback(EventCallbackWithChar callback)
@@ -67,6 +75,8 @@ extern "C"
 	//__declspec(dllexport) void ScanDevices(char* scannedDevices, int* charCount)
 	__declspec(dllexport) void ScanDevices()
 	{
+		_log.Developer(L"ScanDevices() - 디바이스 스캔 시작");
+
 		PortScanner scanner = PortScanner(_log);
 		scanner.ScanDevices();
 
@@ -74,25 +84,31 @@ extern "C"
 		std::map<int, std::wstring> deviceNameList = scanner.GetDeviceNameList();
 		std::map<int, DeviceType>   deviceTypeList = scanner.GetDeviceTypeList();
 
+		int deviceCount = deviceNameList.size();
+
+		std::wstring deviceInfo;
 		std::wstring header;
 		for (size_t i = 0; i < deviceNameList.size(); i++) {
 			switch (deviceTypeList[i]) {
-				case USB_COM:   header = L"[USB_COM]";       break;
-				case BTClassic: header = L"[BTClassic]"; break;
-				case BLE:       header = L"[BLE]";       break;
+				case USB_COM:   header = L"[USB] ";       break;
+				case BTClassic: header = L"[BTClassic] "; break;
+				case BLE:       header = L"[BLE] ";       break;
 			}
-
-			_log.Normal(L"%s %s", header.c_str(), deviceNameList[i].c_str());
-
-			//memcpy(scannedDevices + offset, header.c_str(), 2 * header.length());
-			//offset += 2 * header.length();
-			//memcpy(scannedDevices + offset, deviceNameList[i].c_str(), 2 * deviceNameList[i].length());
-			//offset += 2 * deviceNameList[i].length();
-			//memcpy(scannedDevices + offset, L"\\", 2);
-			//offset += 2;
+			deviceInfo.append(header);
+			deviceInfo.append(deviceNameList[i]);
+			deviceInfo.append(L"\\");
 		}
 
-		//*charCount = offset;
+		if (_isScanEventRegistered) {
+			_log.Developer(L"ScanDevices() - OnScanEnded 이벤트 호출");
+			// 유니코드 문자열이기 때문에 1글자 당 2바이트 할당
+			int* strLength = new int(deviceInfo.length() * 2);
+			char* str = new char[*strLength];
+			memcpy(str, deviceInfo.c_str(), *strLength);
+			_scanCallback(str, strLength);
+		}
+
+		_log.Developer(L"ScanDevices() - 디바이스 스캔 종료");
 	}
 
 	__declspec(dllexport) int CreateConnection(int handle)

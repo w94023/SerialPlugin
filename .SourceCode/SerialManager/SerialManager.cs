@@ -17,8 +17,8 @@ namespace SerialManager
 		public  event Action<SerialLog>      onLogReceived;
 
 		// Scan device 관련
-		public event Action<SerialLog>   onScanEnded;
-		private byte[]                  _scannedDevices = new byte[10000];
+		public  event Action<SerialLog>      onScanEnded;
+		private event EventCallbackWithChar _onScanEnded;
 
 		// 연결 설정
 		private IntPtr _deviceNamePtr = IntPtr.Zero;
@@ -84,7 +84,7 @@ namespace SerialManager
 
 		public SerialHandle()
 		{
-			OpenConsoleAndPrint();
+			//OpenConsoleAndPrint();
 
 			_packetConfig = new PacketConfig();
 			_packetConfig.receiveByteSize = 1;
@@ -109,6 +109,7 @@ namespace SerialManager
 			_connectionConfig.useTimeout = 1;
 			_connectionConfig.connectionTimeout = 30000;
 
+			_onScanEnded    = new EventCallbackWithChar(OnScanEnded);
 			_onLogReceived  = new EventCallbackWithChar(OnLogReceived);
 			_onDataReceived = new EventCallbackWithChar(OnDataReceived);
 
@@ -116,6 +117,7 @@ namespace SerialManager
 			_onConnectionFailed = new EventCallback(OnConnectionFailed);
 			_onDisconnected     = new EventCallback(OnDisconnected);
 
+			SetScanCallback(_onScanEnded);
 			SetLogCallback(_onLogReceived);
 			SetLogLevel(_logLevel);
 		}
@@ -134,21 +136,27 @@ namespace SerialManager
 		{
 			string log = Marshal.PtrToStringUni(ptr, length / 2);
 			Invoke(onLogReceived, new SerialLog(log));
-
 			DeleteLogMemory(ptr);
 		}
 
 		public void ScanDevices()
 		{
-			int byteCount = 0;
-			CPPImportLayer.ScanDevices(_scannedDevices, ref byteCount);
+			CPPImportLayer.ScanDevices();
+		}
 
-			if (byteCount == 0) return;
-
-			string str = Encoding.Unicode.GetString(_scannedDevices, 0, byteCount);
-			string[] devices = str.Split('\\');
-			
-			Invoke(onScanEnded, new SerialLog(devices.Take(devices.Length - 1).ToArray()));
+		private void OnScanEnded(IntPtr ptr, ref int length)
+		{
+			string devicesStr = Marshal.PtrToStringUni(ptr, length / 2);
+			string[] devicesTokens = devicesStr.Split('\\');
+			if (devicesTokens.Length > 1) {
+				string[] devices = new string[devicesTokens.Length - 1];
+				Array.Copy(devicesTokens, devices, devices.Length);
+				Invoke(onScanEnded, new SerialLog(devicesStr.Split('\\')));
+			}
+			else {
+				Invoke(onScanEnded, new SerialLog(new string[] { }));
+			}
+			DeleteLogMemory(ptr);
 		}
 
 		private void CreateConnection()

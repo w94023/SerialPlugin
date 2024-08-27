@@ -21,29 +21,36 @@ void ConnectionManager::Connect()
 	std::thread _thread([this]() {
 		_threadStarted = true;
 		_log.Developer(L"[%s, %d] ConnectionManager::Connect - 연결 스레드 시작", _config.deviceName, _handle);
+		_log.Developer(L"[%s, %d] ConnectionManager::Connect - 디바이스 타입 : %d", _config.deviceName, _handle, (int)_config.deviceType);
 		_dataManager.SetDeviceName(_config.deviceName);
 
 		switch (_config.deviceType) {
+			case None:      _port = NULL; break;
 			case BTClassic: _port = new BTClassicManager(std::ref(_log), std::ref(_config), std::ref(_dataManager), std::ref(_threadManager), [this]() { this->Disconnect(); }); break;
 			case BLE:	    _port = new BLEManager      (std::ref(_log), std::ref(_config), std::ref(_dataManager), std::ref(_threadManager), [this]() { this->Disconnect(); }); break;
 			case USB_COM:	_port = new COMManager      (std::ref(_log), std::ref(_config), std::ref(_dataManager), std::ref(_threadManager), [this]() { this->Disconnect(); }); break;
 #ifdef USE_DAQ
 			case NI_DAQ:	_port = new CDAQCom         (std::ref(_log), std::ref(_config), std::ref(_dataManager), std::ref(_threadManager), [this]() { this->Disconnect(); }); break;
+#else
+			case NI_DAQ:    _port = NULL; break;
 #endif
 			case TCP:
 				if (_config.socketType == Server) _port = new TCPServer(std::ref(_log), std::ref(_config), std::ref(_dataManager), std::ref(_threadManager), [this]() { this->Disconnect(); });
 				break;
 		}
-		_port->handle = _handle;
 
-		_log.Developer(L"[%s, %d] ConnectionManager::Connect - port open 요청", _config.deviceName, _handle);
-		Open();
+		if (_port != NULL) {
+			_port->handle = _handle;
 
-		std::unique_lock<std::mutex> lock(_mtx);
-		_cv.wait(lock, [this]{ return _stopThreadRequest; });
-		_log.Developer(L"[%s, %d] ConnectionManager::Connect - thread stop request 수신", _config.deviceName, _handle);
-		Close();
+			_log.Developer(L"[%s, %d] ConnectionManager::Connect - port open 요청", _config.deviceName, _handle);
+			Open();
 
+			std::unique_lock<std::mutex> lock(_mtx);
+			_cv.wait(lock, [this]{ return _stopThreadRequest; });
+			_log.Developer(L"[%s, %d] ConnectionManager::Connect - thread stop request 수신", _config.deviceName, _handle);
+			Close();
+		}
+		
 		_stopThreadResponse = true;
 		_cv.notify_all();
 		_log.Developer(L"[%s, %d] ConnectionManager::Connect - 연결 스레드 종료", _config.deviceName, _handle);

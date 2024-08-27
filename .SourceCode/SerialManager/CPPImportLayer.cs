@@ -99,6 +99,9 @@ namespace SerialManager
 		internal static extern void OpenConsoleAndPrint();
 
 		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void SetScanCallback(EventCallbackWithChar callback);
+
+		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void SetLogCallback(EventCallbackWithChar callback);
 
 		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -108,7 +111,7 @@ namespace SerialManager
 		internal static extern void DeleteLogMemory(IntPtr logPtr);
 
 		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int ScanDevices(byte[] scannedDevices, ref int byteCount);
+		internal static extern int ScanDevices();
 
 		[DllImport("SerialPort.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int CreateConnection(int CPPHandle);
