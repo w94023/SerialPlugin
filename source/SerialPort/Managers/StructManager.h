@@ -28,7 +28,7 @@ private:
 	bool _isEventRegistered = false;
 	int  _logLevel = 0;
 
-	void ExportLog(std::wstring log, va_list args);
+	void ExportLog(char header, std::wstring log, va_list args);
 };
 
 typedef enum
@@ -131,7 +131,7 @@ struct ConnectionConfig
 	DeviceType deviceType;
 	wchar_t*   deviceName;
 
-	BaudRate    baudRate;
+	int         baudRate;
 	DataBit     dataBit;
 	Parity      parity;
 	StopBit     stopBit;

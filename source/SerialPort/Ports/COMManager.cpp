@@ -12,7 +12,7 @@ COMManager::COMManager(LogManager& log, ConnectionConfig& config, DataManager& d
 
 	// COM 포트 개방용 데이터 저장
 	_portName     = _config.deviceName;
-	_baudRate     = (int)_config.baudRate;
+	_baudRate     = _config.baudRate;
 	_dataBits     = (char)_config.dataBit;
 	_parity       = (char)_config.parity;
 	_stopBits     = (char)_config.stopBit;

@@ -1,14 +1,14 @@
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\ConnectionManager.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\ConnectionManager.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\BLEManager.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\BLEManager.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\BTClassicManager.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\BTClassicManager.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\COMManager.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\COMManager.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\DAQCom.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\DAQCom.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\dllmain.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\dllmain.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\OutputLayers\OutputLayer.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\OutputLayer.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\PortScanner.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\PortScanner.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\SockCommon.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\SockCommon.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\TCPServer.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\TCPServer.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Ports\TCPServer.h;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\TCPServer.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\PreviousCode.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\PreviousCode.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\Managers\ThreadManager.h;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\ThreadManager.obj
-C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\StructManager.cpp;C:\Users\오세천\Desktop\GitHub\SerialPlugin\.SourceCode\SerialPort\x64\Release\StructManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\ConnectionManager.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\ConnectionManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\BLEManager.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\BLEManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\BTClassicManager.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\BTClassicManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\COMManager.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\COMManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\DAQCom.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\DAQCom.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\dllmain.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\dllmain.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\OutputLayers\OutputLayer.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\OutputLayer.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\PortScanner.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\PortScanner.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\SockCommon.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\SockCommon.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\TCPServer.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\TCPServer.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Ports\TCPServer.h;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\TCPServer.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\PreviousCode.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\PreviousCode.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\Managers\ThreadManager.h;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\ThreadManager.obj
+C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\StructManager.cpp;C:\Users\w9402\OneDrive\바탕 화면\GitHub\SerialPlugin\source\SerialPort\x64\Release\StructManager.obj

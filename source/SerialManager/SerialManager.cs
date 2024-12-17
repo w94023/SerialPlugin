@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,7 +13,7 @@ namespace SerialManager
 	{
 		// Log 관련
 		// 0 : Error, 1 : Error+Normal, 2 : Error+Normal+Developer
-		private int _logLevel = 1; public int logLevel { get { return _logLevel; } set { _logLevel = value; SetLogLevel(_logLevel); } }
+		private int _logLevel = 1; public int logLevel { get { return _logLevel; } set { _logLevel = value; } }
 		private event EventCallbackWithChar _onLogReceived;
 		public  event Action<SerialLog>      onLogReceived;
 
@@ -84,6 +85,10 @@ namespace SerialManager
 		public  double  CPULimit    { get { return _resourceConfig.CPULimit;    } set { _resourceConfig.CPULimit    = value; SetResourceConfig(_CPPHandle, _resourceConfig); } }
 		public  int     memoryLimit { get { return _resourceConfig.memoryLimit; } set { _resourceConfig.memoryLimit = value; SetResourceConfig(_CPPHandle, _resourceConfig); } }
 
+		// 로그 파일
+		private string _filePath = "log.txt";
+		private long _maxFileSizeInBytes = 1024 * 1024; // 최대 파일 크기: 1MB
+
 		public SerialHandle()
 		{
 			//OpenConsoleAndPrint();
@@ -121,7 +126,16 @@ namespace SerialManager
 
 			SetScanCallback(_onScanEnded);
 			SetLogCallback(_onLogReceived);
-			SetLogLevel(_logLevel);
+			SetLogLevel(2);
+
+			SetLogFile(" ");
+			SetLogFile(" ");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(GetCurrentTime());
+			SetLogFile("Instance created");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(" ");
+			SetLogFile(" ");
 		}
 
 		~SerialHandle()
@@ -134,15 +148,53 @@ namespace SerialManager
 			Marshal.FreeHGlobal(_stopBytePtr);
 		}
 
+		private string GetCurrentTime()
+		{
+			// 현재 시간 가져오기
+			DateTime now = DateTime.Now;
+
+			// 연월일시분초 형태로 문자열 변환
+			return now.ToString("yyyy-MM-dd-HH-mm-ss");
+		}
+
+		private void SetLogFile(string lineToAdd)
+		{
+			// 파일의 크기 확인
+            if (File.Exists(_filePath) && new FileInfo(_filePath).Length > _maxFileSizeInBytes) {
+                // 파일 크기가 초과되면 파일 내용 삭제
+                File.WriteAllText(_filePath, string.Empty);
+            }
+
+			// 내용 추가
+			using (StreamWriter writer = File.AppendText(_filePath)) {
+				writer.WriteLine(lineToAdd);
+			}
+		}
+
 		private void OnLogReceived(IntPtr ptr, ref int length)
 		{
-			string log = Marshal.PtrToStringUni(ptr, length / 2);
-			Invoke(onLogReceived, new SerialLog(log));
+			byte header = Marshal.ReadByte(ptr);
+			string log = Marshal.PtrToStringUni(ptr + 1, (length - 1) / 2);
+			// ASCII '0' : 48, '1' : 49, '2' : 50
+			// log level을 ASCII 문자로 반환
+			if (header - 48 <= _logLevel) {
+				Invoke(onLogReceived, new SerialLog(log));
+			}
+			SetLogFile(log);
 			DeleteLogMemory(ptr);
 		}
 
 		public void ScanDevices()
 		{
+			SetLogFile(" ");
+			SetLogFile(" ");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(GetCurrentTime());
+			SetLogFile("Device scan requested");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(" ");
+			SetLogFile(" ");
+
 			CPPImportLayer.ScanDevices();
 		}
 
@@ -173,7 +225,7 @@ namespace SerialManager
 			}
 		}
 
-		public void Connect(string comPort, BaudRate baudRate,
+		public void Connect(string comPort, int baudRate,
 			DataBit dataBit = DataBit.bit8, Parity parity = Parity.None, StopBit stopBit = StopBit.bit1, FlowControl flowControl = FlowControl.None)
 		{
 			if (_isConnected) Disconnect();
@@ -203,13 +255,6 @@ namespace SerialManager
 
 			Connect();
 		}
-
-		//public void Connect(string deviceName, UUID uuid)
-		//{
-		//	Disconnect();
-		//	_handle = new SerialPortManager(deviceName, uuid);
-		//	ConnectHandle();
-		//}
 
 		public void Connect(string deviceName, int[] AIPorts, int[] AOPorts, int[] DPorts, int[] lines)
 		{
@@ -266,6 +311,15 @@ namespace SerialManager
 
 		private void Connect()
 		{
+			SetLogFile(" ");
+			SetLogFile(" ");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(GetCurrentTime());
+			SetLogFile("Connect requested");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(" ");
+			SetLogFile(" ");
+
 			CreateConnection();
 
 			SetPacketConfig(_CPPHandle, _packetConfig);
@@ -296,6 +350,15 @@ namespace SerialManager
 
 		public void Disconnect()
 		{
+			SetLogFile(" ");
+			SetLogFile(" ");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(GetCurrentTime());
+			SetLogFile("Disconnect requested");
+			SetLogFile("////////////////////////////////////////////////////////////");
+			SetLogFile(" ");
+			SetLogFile(" ");
+
 			CPPImportLayer.Disconnect(_CPPHandle);
 		}
 

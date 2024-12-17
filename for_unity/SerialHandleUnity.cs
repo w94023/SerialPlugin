@@ -32,7 +32,7 @@ namespace SerialManager
         [HideInInspector] public SocketType socketType = SocketType.Server;
         // USB option
         [HideInInspector] public string      portName    = "";
-        [HideInInspector] public BaudRate    baudRate    = BaudRate.bps9600;
+        [HideInInspector] public int         baudRate    = 9600;
         [HideInInspector] public DataBit     dataBit     = DataBit.bit8;
         [HideInInspector] public Parity      parity      = Parity.None;
         [HideInInspector] public StopBit     stopBit     = StopBit.bit1;

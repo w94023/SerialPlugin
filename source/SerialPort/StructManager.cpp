@@ -64,12 +64,11 @@ void LogManager::Delete(char* log)
 	delete[] log;
 }
 
-void LogManager::Error(std::wstring log, ...)     { va_list args; va_start(args, log); if (_logLevel >= 0) { ExportLog(log, args); va_end(args); } }
-void LogManager::Normal(std::wstring log, ...)    { va_list args; va_start(args, log); if (_logLevel >= 1) { ExportLog(log, args); va_end(args); } }
-void LogManager::Developer(std::wstring log, ...) { va_list args; va_start(args, log); if (_logLevel >= 2) { ExportLog(log, args); va_end(args); } }
+void LogManager::Error(std::wstring log, ...)     { va_list args; va_start(args, log); if (_logLevel >= 0) { ExportLog('0', log, args); va_end(args); } }
+void LogManager::Normal(std::wstring log, ...)    { va_list args; va_start(args, log); if (_logLevel >= 1) { ExportLog('1', log, args); va_end(args); } }
+void LogManager::Developer(std::wstring log, ...) { va_list args; va_start(args, log); if (_logLevel >= 2) { ExportLog('2', log, args); va_end(args); } }
 
-
-void LogManager::ExportLog(std::wstring log, va_list args)
+void LogManager::ExportLog(char header, std::wstring log, va_list args)
 {
 	std::wstringstream wss;
 	const wchar_t* logStr = log.c_str();
@@ -105,10 +104,17 @@ void LogManager::ExportLog(std::wstring log, va_list args)
 
 	std::wstring formattedString = wss.str();
 
-	int* strLength = new int(2 * formattedString.length());
-	char* str = new char[*strLength];
-	memcpy(str, formattedString.c_str(), *strLength);
+	// String 길이 도출
+	int* strLength = new int(2 * formattedString.length() + 1); // 1은 header를 위해 비워둠
 
+	// String 포인터 생성 후 Header를 제외한 string 붙여넣기
+	char* str = new char[*strLength];
+	memcpy(str + 1, formattedString.c_str(), *strLength);
+
+	// Header 붙여넣기
+	str[0] = header;
+	
+	// 이벤트 호출해서 string 출력
 	if (_isEventRegistered) _callback(str, strLength);
 }
 

@@ -32,7 +32,7 @@ namespace SerialManager
 			public DeviceType deviceType;
 			public IntPtr deviceName;
 			// For USB
-			public BaudRate baudRate;
+			public int    baudRate;
 			public DataBit dataBit;
 			public Parity parity;
 			public StopBit stopBit;
